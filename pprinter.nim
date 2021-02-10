@@ -1,8 +1,8 @@
 import grammar
 
-proc pprint*(t: Term): string =
-    if t of Var:
-        let x = Var(t)
-        x.id
+func pprint*(t: Term): string =
+    case t.kind:
+    of Var:
+        t.id
     else:
         "pprint error"

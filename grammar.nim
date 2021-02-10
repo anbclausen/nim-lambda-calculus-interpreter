@@ -1,10 +1,13 @@
 type
-    Term*   = ref object of RootObj
-    Var*    = ref object of Term
-        id*: string
-    Abs*    = ref object of Term
-        id*: string
-        body*: ref Term
-    App*    = ref object of Term
-        t1*: ref Term
-        t2*: ref Term
+    Kind*    = enum
+        Var, Abs, App
+    Term*   = object 
+        case kind*: Kind
+        of Var: 
+            id*: string
+        of Abs:
+            x*: string
+            body*: ref Term
+        of App:
+            t1*: ref Term
+            t2*: ref Term

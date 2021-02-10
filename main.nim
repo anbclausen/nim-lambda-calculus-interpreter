@@ -8,5 +8,5 @@ while true:
 
     if inp == "quit":
         break
-
+    
     echo pprint(parse(inp))

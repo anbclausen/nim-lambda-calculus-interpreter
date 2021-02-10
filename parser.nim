@@ -1,4 +1,4 @@
 import grammar
 
 func parse*(s: string): Term =
-    return Var(id: s)
+    Term(kind: Var, id: s)
