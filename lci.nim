@@ -1,8 +1,8 @@
 import strutils
 
 while true:
-    write(stdout, "λ> ")
-    let inp = strip(readLine(stdin))
+    write(stdout, "λ] ")
+    let inp = readLine(stdin).strip()
 
     if inp == "quit":
         break
