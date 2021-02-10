@@ -1,13 +1,15 @@
 type
     Kind*    = enum
-        Var, Abs, App
-    Term*   = object 
+        Var, 
+        Abs, 
+        App,
+    Term*   = ref object 
         case kind*: Kind
         of Var: 
             id*: string
         of Abs:
-            x*: string
-            body*: ref Term
+            param*: string
+            body*: Term
         of App:
-            t1*: ref Term
-            t2*: ref Term
+            t1*: Term
+            t2*: Term

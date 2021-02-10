@@ -1,8 +1,11 @@
 import grammar
+import strformat
 
 func pprint*(t: Term): string =
     case t.kind:
     of Var:
         t.id
-    else:
-        "pprint error"
+    of Abs:
+        fmt"(λ{t.x}.{pprint(t.body)})"
+    of App:
+        fmt"{pprint(t.t1)} {pprint(t.t2)}"
