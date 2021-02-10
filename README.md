@@ -8,7 +8,7 @@ Stay tuned!
 ## How to run
 Navigate to the file in your terminal. Write the following to compile and run the interpreter.
 ```
-nim c -r lci.nim 
+nim c -r main.nim 
 ```
 
 Of course you need to have Nim installed.

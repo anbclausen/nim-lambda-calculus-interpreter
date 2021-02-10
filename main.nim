@@ -1,4 +1,6 @@
 import strutils
+import parser
+import pprinter
 
 while true:
     write(stdout, "λ] ")
@@ -7,4 +9,4 @@ while true:
     if inp == "quit":
         break
 
-    echo "Input was ", inp
+    echo pprint(parse(inp))
