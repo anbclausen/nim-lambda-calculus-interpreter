@@ -2,7 +2,6 @@ import grammar
 import strutils
 
 func parse*(s: string): Term =
-    new(result)
     if s.startsWith('\\'):
         let ss = s.substr(1)
         let payload = ss.split('.')
