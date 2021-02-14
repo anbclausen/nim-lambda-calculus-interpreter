@@ -12,3 +12,5 @@ nim c -r main.nim
 ```
 
 Of course you need to have Nim installed.
+
+I have not used any non-standard libraries... yet :)
