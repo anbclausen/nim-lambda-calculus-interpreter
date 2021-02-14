@@ -1,5 +1,6 @@
 import strutils
 import parser
+import lexer
 import pprinter
 import interpreter
 
@@ -11,4 +12,4 @@ while true:
         echo "Goodbλe!"
         break
     
-    echo pprint(eval(parse(inp)))
+    echo pprint(tokenize(inp))
