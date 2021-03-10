@@ -16,6 +16,9 @@ func baseToken(c: char): bool =
   c == '\\' or c == '.' or c == '(' or c == ')' or c == ' '
 
 func readWord(source: string, i: int): (string, int) =
+  ## Reads word from `source` string from given index `i` until a base token is found.
+  ## Returns the word and length of that word.
+  
   var str = ""
   var j = 0
   while i + j < source.len and not source[i + j].baseToken():
@@ -39,7 +42,7 @@ func tokenize*(source: string): seq[Token] =
          i += 1
          continue
       else:        # must be ID term
-        let (name, inc) = readWord(source, i)
-        i += inc
+        let (name, len) = readWord(source, i)
+        i += len
         result.add(Token(ttype: ID, name: name))
     i += 1
