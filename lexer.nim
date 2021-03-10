@@ -15,6 +15,14 @@ type
 func baseToken(c: char): bool =
   c == '\\' or c == '.' or c == '(' or c == ')' or c == ' '
 
+func readWord(source: string, i: int): (string, int) =
+  var str = ""
+  var j = 0
+  while i + j < source.len and not source[i + j].baseToken():
+    str.add(source[i + j])
+    j += 1
+  (str, j - 1)
+
 func tokenize*(source: string): seq[Token] = 
   var i = 0
   while i < source.len:
@@ -30,13 +38,8 @@ func tokenize*(source: string): seq[Token] =
       of ' ':      # just skip white space
          i += 1
          continue
-      else:
-        var str = ""
-        var j = 0
-        while i + j < source.len and not source[i + j].baseToken():
-          str.add(source[i + j])
-          j += 1
-        i += j - 1 # dec j by one because i is inc before next loop
-        result.add(Token(ttype: ID, name: str))
-
+      else:        # must be ID term
+        let (name, inc) = readWord(source, i)
+        i += inc
+        result.add(Token(ttype: ID, name: name))
     i += 1
