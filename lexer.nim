@@ -1,3 +1,6 @@
+import fusion/matching
+{.experimental: "caseStmtMacros".}
+
 type
     TokenType* = enum
         LAMBDA,
@@ -15,34 +18,19 @@ type
 func baseToken(c: char): bool =
     c == '\\' or c == '.' or c == '(' or c == ')' or c == ' '
 
-func readWord(source: string, i: int): (string, int) =
-    ## Reads word from `source` string from given index `i` until a base token is found.
-    ## Returns the word and length of that word.
-  
-    var str = ""
-    var j = 0
-    while i + j < source.len and not source[i + j].baseToken():
-        str.add(source[i + j])
-        j += 1
-    (str, j - 1)
-
-func tokenize*(source: string): seq[Token] = 
-    var i = 0
-    while i < source.len:
-        case source[i]:
-        of '\\':
-            result.add(Token(ttype: LAMBDA))
-        of '.':
-            result.add(Token(ttype: DOT))
-        of '(':
-            result.add(Token(ttype: LPAREN))
-        of ')':
-            result.add(Token(ttype: RPAREN))
-        of ' ':      # just skip white space
-            i += 1
-            continue
-        else:        # must be ID term
-            let (name, len) = readWord(source, i)
-            i += len
-            result.add(Token(ttype: ID, name: name))
-        i += 1
+func tokenize*(source: seq[char]): seq[Token] = 
+    case source:
+        of []:
+            return @[]
+        of ['\\', all @tail]:
+            return @[Token(ttype: LAMBDA)] & tokenize(tail)
+        of ['.', all @tail]:
+            return @[Token(ttype: DOT)] & tokenize(tail)
+        of ['(', all @tail]:
+            return @[Token(ttype: LPAREN)] & tokenize(tail)
+        of [')', all @tail]:
+            return @[Token(ttype: RPAREN)] & tokenize(tail)
+        of [' ', until != ' ', all @tail]:
+            return tokenize(tail)
+        of [until @a.baseToken(), all @tail]:
+            return Token(ttype: ID, name: cast[string](a)) & tokenize(tail)

@@ -1,8 +1,4 @@
-import strutils
-import parser
-import lexer
-import pprinter
-import interpreter
+import strutils, parser, lexer, pprinter, interpreter, sequtils
 
 while true:
     write(stdout, "λ] ")
@@ -12,4 +8,4 @@ while true:
         echo "Goodbλe!"
         break
     
-    echo pprint(tokenize(inp))
+    echo pprint(tokenize(toSeq(inp.items)))
