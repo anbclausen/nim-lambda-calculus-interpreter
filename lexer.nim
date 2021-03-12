@@ -21,16 +21,18 @@ func baseToken(c: char): bool =
 func tokenize*(source: seq[char]): seq[Token] = 
     case source:
         of []:
-            return @[]
+            @[]
         of ['\\', all @tail]:
-            return @[Token(ttype: LAMBDA)] & tokenize(tail)
+            @[Token(ttype: LAMBDA)] & tokenize(tail)
         of ['.', all @tail]:
-            return @[Token(ttype: DOT)] & tokenize(tail)
+            @[Token(ttype: DOT)] & tokenize(tail)
         of ['(', all @tail]:
-            return @[Token(ttype: LPAREN)] & tokenize(tail)
+            @[Token(ttype: LPAREN)] & tokenize(tail)
         of [')', all @tail]:
-            return @[Token(ttype: RPAREN)] & tokenize(tail)
+            @[Token(ttype: RPAREN)] & tokenize(tail)
         of [' ', until != ' ', all @tail]:
-            return tokenize(tail)
+            tokenize(tail)
         of [until @a.baseToken(), all @tail]:
-            return Token(ttype: ID, name: cast[string](a)) & tokenize(tail)
+            Token(ttype: ID, name: cast[string](a)) & tokenize(tail)
+        else:
+            raise newException(IOError, "Lexer couldn't tokenize. Illegal symbol encountered.")
