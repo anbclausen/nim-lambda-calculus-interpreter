@@ -5,6 +5,12 @@ I will take a semi-functional approach to writing this interpreter.
 
 Stay tuned!
 
+## Prerequisites
+You should have the `fusion` library installed. This is used for pattern matching.
+```
+nimble install fusion
+```
+
 ## How to run
 Navigate to the file in your terminal. Write the following to compile and run the interpreter.
 ```
