@@ -1,15 +1,15 @@
 type
-    Kind*    = enum
+    MyKind*    = enum
         Var, 
         Abs, 
         App,
-    Term*   = ref object 
-        case kind*: Kind
+    MyTerm*   = ref object 
+        case mykind*: MyKind
         of Var: 
             id*: string
         of Abs:
             param*: string
-            body*: Term
+            body*: MyTerm
         of App:
-            t1*: Term
-            t2*: Term
+            t1*: MyTerm
+            t2*: MyTerm
