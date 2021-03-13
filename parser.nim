@@ -34,9 +34,9 @@ proc parse*(prog: seq[Token]): Term =
                 else:
                     raise newException(Exception, "λ-Parse Error: Illegal AST.")
         func genTerm(atoms: seq[seq[Token]]): Term =
-            case atoms.len:
-                of 1:
-                    return parse(atoms[0])
+            case atoms:
+                of [@a]:
+                    return parse(a)
                 else: 
                     return Term(kind: App, t1: genTerm(atoms[0..^2]), t2: parse(atoms[^1]))
         return genTerm(findAtoms(prog))
