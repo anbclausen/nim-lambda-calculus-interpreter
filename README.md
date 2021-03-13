@@ -11,10 +11,10 @@ You should have the `fusion` library installed. This is used for pattern matchin
 nimble install fusion
 ```
 
+Of course you need to have Nim installed.
+
 ## How to run
 Navigate to the file in your terminal. Write the following to compile and run the interpreter.
 ```
 nim c -r main.nim 
 ```
-
-Of course you need to have Nim installed.
