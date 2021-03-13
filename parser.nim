@@ -40,12 +40,10 @@ proc parse*(prog: seq[Token]): Term =
                 else: 
                     return Term(kind: App, t1: genTerm(atoms[0..^2]), t2: parse(atoms[^1]))
         return genTerm(findAtoms(prog))
-    func term(prog: seq[Token]): Term =
-        case prog:
-            of [Token(ttype: LAMBDA), Token(ttype: ID, name: @name), Token(ttype: DOT), all @body]:
-                return Term(kind: Abs, param: name, body: parse(body))
-            of [Token(ttype: ID, name: @name)]:
-                return Term(kind: Var, id: name)
-            else:
-                return app(prog)
-    return term(prog)
+    case prog:
+        of [Token(ttype: LAMBDA), Token(ttype: ID, name: @name), Token(ttype: DOT), all @body]:
+            return Term(kind: Abs, param: name, body: parse(body))
+        of [Token(ttype: ID, name: @name)]:
+            return Term(kind: Var, id: name)
+        else:
+            return app(prog)
