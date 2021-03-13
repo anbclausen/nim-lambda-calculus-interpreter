@@ -19,31 +19,29 @@ proc matchingParen(prog: seq[Token]): (seq[Token], seq[Token]) =
         (prog[0..<i-1], prog[i..<prog.len])
 
 proc parse*(prog: seq[Token]): Term =
-    func app(prog: seq[Token]): Term =
-        func findAtoms(subprog: seq[Token]): seq[seq[Token]] =
-            case subprog:
-                of []:
-                    return @[]
-                of [Token(ttype: ID, name: @name)]:
-                    return @[@[Token(ttype: ID, name: name)]]
-                of [Token(ttype: ID, name: @name), .._]:
-                    return @[@[Token(ttype: ID, name: name)]] & findAtoms(subprog[1..^1])
-                of [Token(ttype: LPAREN), all @tail]:
-                    let (inner, rest) = matchingParen(tail)
-                    return @[inner] & findAtoms(rest)
-                else:
-                    raise newException(Exception, "λ-Parse Error: Illegal AST.")
-        func genTerm(atoms: seq[seq[Token]]): Term =
-            case atoms:
-                of [@a]:
-                    return parse(a)
-                else: 
-                    return Term(kind: App, t1: genTerm(atoms[0..^2]), t2: parse(atoms[^1]))
-        return genTerm(findAtoms(prog))
+    func findAtoms(subprog: seq[Token]): seq[seq[Token]] =
+        case subprog:
+            of []:
+                return @[]
+            of [Token(ttype: ID, name: @name)]:
+                return @[@[Token(ttype: ID, name: name)]]
+            of [Token(ttype: ID, name: @name), .._]:
+                return @[@[Token(ttype: ID, name: name)]] & findAtoms(subprog[1..^1])
+            of [Token(ttype: LPAREN), all @tail]:
+                let (inner, rest) = matchingParen(tail)
+                return @[inner] & findAtoms(rest)
+            else:
+                raise newException(Exception, "λ-Parse Error: Illegal AST.")
+    func genTerm(atoms: seq[seq[Token]]): Term =
+        case atoms:
+            of [@a]:
+                return parse(a)
+            else: 
+                return Term(kind: App, t1: genTerm(atoms[0..^2]), t2: parse(atoms[^1]))
     case prog:
         of [Token(ttype: LAMBDA), Token(ttype: ID, name: @name), Token(ttype: DOT), all @body]:
             return Term(kind: Abs, param: name, body: parse(body))
         of [Token(ttype: ID, name: @name)]:
             return Term(kind: Var, id: name)
         else:
-            return app(prog)
+            return genTerm(findAtoms(prog))
