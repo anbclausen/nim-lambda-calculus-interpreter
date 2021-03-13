@@ -20,6 +20,8 @@ proc matchingParen(prog: seq[Token]): (seq[Token], seq[Token]) =
 
 proc parse*(prog: seq[Token]): Term =
     func findAtoms(subprog: seq[Token]): seq[seq[Token]] =
+        ## Finds all atoms on form `Var` or `(Exp)`
+        ## in sequence of tokens.
         case subprog:
             of []:
                 return @[]
@@ -33,6 +35,8 @@ proc parse*(prog: seq[Token]): Term =
             else:
                 raise newException(Exception, "λ-Parse Error: Illegal AST. Atoms have to be on form Var or (Exp).")
     func genApplication(atoms: seq[seq[Token]]): Term =
+        ## Generates term consisting only of left-associative 
+        ## applications from atoms on form `Var` or `(Exp)`.
         case atoms:
             of [@a]:
                 return parse(a)
