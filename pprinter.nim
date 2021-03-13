@@ -1,6 +1,4 @@
-import grammar
-import lexer
-import strformat
+import ast, lexer, strformat
 
 func pprint*(t: Term): string =
     case t.kind:

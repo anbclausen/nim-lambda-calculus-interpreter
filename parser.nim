@@ -1,4 +1,4 @@
-import fusion/matching, grammar, lexer
+import fusion/matching, ast, lexer
 {.experimental: "caseStmtMacros".}
 
 proc matchingParen(prog: seq[Token]): (seq[Token], seq[Token]) =
