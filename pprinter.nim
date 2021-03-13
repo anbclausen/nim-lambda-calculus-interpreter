@@ -9,7 +9,7 @@ func pprint*(t: Term): string =
     of Abs:
         fmt"(λ{t.param}.{pprint(t.body)})"
     of App:
-        fmt"{pprint(t.t1)} {pprint(t.t2)}"
+        fmt"({pprint(t.t1)} {pprint(t.t2)})"
 
 func pprint*(tokens: seq[Token]): string =    # to pretty print the lexer's output
     for i in 0 ..< tokens.len:
