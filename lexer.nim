@@ -35,4 +35,4 @@ func tokenize*(source: seq[char]): seq[Token] =
         of [until @a.baseToken(), all @tail]:
             Token(ttype: ID, name: cast[string](a)) & tokenize(tail)
         else:
-            raise newException(Exception, "Lexer couldn't tokenize. Illegal symbol encountered.")
+            raise newException(Exception, "λ-Lexer Error: Illegal symbol encountered.")
