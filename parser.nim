@@ -1,24 +1,27 @@
-import fusion/matching, ast, lexer
+import fusion/matching, sequtils, sugar, ast, lexer, tables
 {.experimental: "caseStmtMacros".}
 
-proc matchingParen(prog: seq[Token]): (seq[Token], seq[Token]) =
+func matchingParenthesis(prog: seq[Token]): (seq[Token], seq[Token]) =
+    ## Takes sequence of tokens without initial `(`
+    ## and finds the matching `)`.
+    ## 
+    ## Returns a tuple with inner expression of 
+    ## parentheses, and the rest of the prog.
+    let mappings = {LPAREN: -1, RPAREN: 1, DOT: 0, LAMBDA: 0, ID: 0}.toTable
+    let vals = prog.map(t => mappings[t.ttype])
     var i = 0
     var bal = -1
-    while bal < 0 and i < prog.len:
-        let peek = prog[i]
-        if peek.ttype == LPAREN:
-            dec bal
-        elif peek.ttype == RPAREN:
-            inc bal
+    while bal < 0 and i < vals.len:
+        bal += vals[i]
         inc i
     if bal < 0:
         raise newException(Exception, "λ-Parse Error: Mismatched parentheses.")
     if i == prog.len:
         (prog[0..<i-1], @[])
     else:
-        (prog[0..<i-1], prog[i..<prog.len])
+        (prog[0..<i-1], prog[i..^1])
 
-proc parse*(prog: seq[Token]): Term =
+func parse*(prog: seq[Token]): Term =
     func findAtoms(subprog: seq[Token]): seq[seq[Token]] =
         ## Finds all atoms on form `Var` or `(Exp)`
         ## in sequence of tokens.
@@ -30,10 +33,11 @@ proc parse*(prog: seq[Token]): Term =
             of [Token(ttype: ID, name: @name), .._]:
                 return @[@[Token(ttype: ID, name: name)]] & findAtoms(subprog[1..^1])
             of [Token(ttype: LPAREN), all @tail]:
-                let (inner, rest) = matchingParen(tail)
+                let (inner, rest) = matchingParenthesis(tail)
                 return @[inner] & findAtoms(rest)
             else:
-                raise newException(Exception, "λ-Parse Error: Illegal AST. Atoms have to be on form Var or (Exp).")
+                raise newException(Exception, "λ-Parse Error: Atoms have to be on form Var or (Exp).")
+
     func genApplication(atoms: seq[seq[Token]]): Term =
         ## Generates term consisting only of left-associative 
         ## applications from atoms on form `Var` or `(Exp)`.
@@ -42,6 +46,7 @@ proc parse*(prog: seq[Token]): Term =
                 return parse(a)
             else: 
                 return Term(kind: App, t1: genApplication(atoms[0..^2]), t2: parse(atoms[^1]))
+
     case prog:
         of [Token(ttype: LAMBDA), Token(ttype: ID, name: @name), Token(ttype: DOT), all @body]:
             return Term(kind: Abs, param: name, body: parse(body))
