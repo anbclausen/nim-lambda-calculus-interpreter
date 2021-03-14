@@ -14,7 +14,7 @@ Of course you need to have Nim installed: [Official Nim download page](https://n
 ## How to run
 Navigate to the file in your terminal. Write the following to compile and run the interpreter.
 ```
-nim c -r main.nim 
+nim c -r src/main.nim 
 ```
 
 ## Examples
