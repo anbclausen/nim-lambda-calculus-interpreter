@@ -1,20 +1,5 @@
-import fusion/matching, ast, pprinter
+import fusion/matching, ast
 {.experimental: "caseStmtMacros".}
-
-func rename(t: MyTerm, id: string, with: string): MyTerm =
-    case t:
-        of MyTerm(mykind: Var, id: id):
-            MyTerm(mykind: Var, id: with)
-        of MyTerm(mykind: Var, id: _):
-            t
-        of MyTerm(mykind: Abs, param: id, body: @body):
-            MyTerm(mykind: Abs, param: with, body: body.rename(id, with))
-        of MyTerm(mykind: Abs, param: @id, body: @body):
-            MyTerm(mykind: Abs, param: id, body: body.rename(id, with))
-        of MyTerm(mykind: App, t1: @t1, t2: @t2):
-            MyTerm(mykind: App, t1: t1.rename(id, with), t2: t2.rename(id, with))
-        else:
-            raise newException(Exception, "λ-Eval Error: Error while renaming.")
 
 func substitute(t: MyTerm, id: string, t2: MyTerm): MyTerm =
     case t:
@@ -26,14 +11,14 @@ func substitute(t: MyTerm, id: string, t2: MyTerm): MyTerm =
             case t2:
                 of MyTerm(mykind: Var, id: id):
                     let nid = id & "'"
-                    MyTerm(mykind: Abs, param: nid, body: substitute(body.rename(id, nid), id, t2))
+                    MyTerm(mykind: Abs, param: nid, body: substitute(body.substitute(id, MyTerm(mykind: Var, id: nid)), id, t2))
                 else:
                     a
         of MyTerm(mykind: Abs, param: @param, body: @body):
             case t2:
                 of MyTerm(mykind: Var, id: param):
                     let nid = param & "'"
-                    MyTerm(mykind: Abs, param: nid, body: substitute(body.rename(param, nid), id, t2))
+                    MyTerm(mykind: Abs, param: nid, body: substitute(body.substitute(param, MyTerm(mykind: Var, id: nid)), id, t2))
                 else:
                     MyTerm(mykind: Abs, param: param, body: body.substitute(id, t2))
         of MyTerm(mykind: App, t1: @t1, t2: @t3):
