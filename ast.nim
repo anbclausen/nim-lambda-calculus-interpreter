@@ -1,10 +1,10 @@
 type
-    MyKind*    = enum
+    TermType*    = enum
         Var, 
         Abs, 
         App,
-    T*   = ref object 
-        case t*: MyKind
+    T*   = ref object         # Term
+        case t*: TermType     # type
         of Var: 
             id*: string
         of Abs:

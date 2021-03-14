@@ -11,6 +11,6 @@ while true:
     let tokens = tokenize(toSeq(inp.items))
     echo "Tokens:   ", pprint(tokens)
     let ast = parse(tokens)
-    echo "Ast:      ", pprint(ast)
+    echo "AST:      ", pprint(ast)
     let res = eval(ast)
-    echo "Res:      ", pprint(res)
+    echo "Result:   ", pprint(res)
