@@ -47,3 +47,6 @@ And when you're done, simply write:
 λ] quit
 Goodbλe!
 ```
+
+## TO DO
+- Introduce `let` keyword to make life a little easier.
