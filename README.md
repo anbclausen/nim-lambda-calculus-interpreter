@@ -12,7 +12,7 @@ nimble install fusion
 Of course you need to have Nim installed: [Official Nim download page](https://nim-lang.org/install.html).
 
 ## How to run
-Navigate to the file in your terminal. Write the following to compile and run the interpreter.
+Navigate to the folder in your terminal. Write the following to compile and run the interpreter.
 ```
 nim c -r src/main.nim 
 ```
