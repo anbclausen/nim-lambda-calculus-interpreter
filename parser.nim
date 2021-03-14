@@ -21,7 +21,7 @@ func matchingParenthesis(prog: seq[Token]): (seq[Token], seq[Token]) =
     else:
         (prog[0..<i-1], prog[i..^1])
 
-func parse*(prog: seq[Token]): MyTerm =
+func parse*(prog: seq[Token]): T =
     func findAtoms(subprog: seq[Token]): seq[seq[Token]] =
         ## Finds all atoms on form `Var` or `(Exp)`
         ## in sequence of tokens.
@@ -38,19 +38,19 @@ func parse*(prog: seq[Token]): MyTerm =
             else:
                 raise newException(Exception, "λ-Parse Error: Atoms have to be on form Var or (Exp).")
 
-    func genApplication(atoms: seq[seq[Token]]): MyTerm =
+    func genApplication(atoms: seq[seq[Token]]): T =
         ## Generates term consisting only of left-associative 
         ## applications from atoms on form `Var` or `(Exp)`.
         case atoms:
             of [@a]:
                 return parse(a)
             else: 
-                return MyTerm(mykind: App, t1: genApplication(atoms[0..^2]), t2: parse(atoms[^1]))
+                return T(t: App, t1: genApplication(atoms[0..^2]), t2: parse(atoms[^1]))
 
     case prog:
         of [Token(ttype: LAMBDA), Token(ttype: ID, name: @name), Token(ttype: DOT), all @body]:
-            return MyTerm(mykind: Abs, param: name, body: parse(body))
+            return T(t: Abs, param: name, body: parse(body))
         of [Token(ttype: ID, name: @name)]:
-            return MyTerm(mykind: Var, id: name)
+            return T(t: Var, id: name)
         else:
             return genApplication(findAtoms(prog))

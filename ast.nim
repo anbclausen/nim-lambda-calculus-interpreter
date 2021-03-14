@@ -3,13 +3,13 @@ type
         Var, 
         Abs, 
         App,
-    MyTerm*   = ref object 
-        case mykind*: MyKind
+    T*   = ref object 
+        case t*: MyKind
         of Var: 
             id*: string
         of Abs:
             param*: string
-            body*: MyTerm
+            body*: T
         of App:
-            t1*: MyTerm
-            t2*: MyTerm
+            t1*: T
+            t2*: T

@@ -1,7 +1,7 @@
 import ast, lexer, strformat
 
-func pprint*(t: MyTerm): string =
-    case t.mykind:
+func pprint*(t: T): string =
+    case t.t:
     of Var:
         t.id
     of Abs:
