@@ -3,6 +3,7 @@ type
         Var, 
         Abs, 
         App,
+        Def,
     T*   = ref object         # Term
         case t*: TermType     # type
         of Var: 
@@ -13,3 +14,6 @@ type
         of App:
             t1*: T
             t2*: T
+        of Def:
+            name*: string
+            val*: T

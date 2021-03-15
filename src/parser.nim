@@ -47,10 +47,18 @@ func parse*(prog: seq[Token]): T =
             else: 
                 return T(t: App, t1: genApplication(atoms[0..^2]), t2: parse(atoms[^1]))
 
+    func parseExpr(subprog: seq[Token]): T =
+        case subprog:
+            of [Token(ttype: LAMBDA), Token(ttype: ID, name: @name), Token(ttype: DOT), all @body]:
+                return T(t: Abs, param: name, body: parse(body))
+            of [Token(ttype: ID, name: @name)]:
+                return T(t: Var, id: name)
+            of [Token(ttype: ID, name: @name), Token(ttype: DEFAS), .._]:
+                raise newException(Exception, "λ-Parse Error: Illegal definition. You cannot use ':=' in an expression.")
+            else:
+                return genApplication(findAtoms(subprog))
     case prog:
-        of [Token(ttype: LAMBDA), Token(ttype: ID, name: @name), Token(ttype: DOT), all @body]:
-            return T(t: Abs, param: name, body: parse(body))
-        of [Token(ttype: ID, name: @name)]:
-            return T(t: Var, id: name)
+        of [Token(ttype: ID, name: @name), Token(ttype: DEFAS), all @expression]:
+            T(t: Def, name: name, val: parseExpr(expression))
         else:
-            return genApplication(findAtoms(prog))
+            parseExpr(prog)
