@@ -48,13 +48,13 @@ proc eval*(t: T): T =
             of T(t: Var, id: @id):
                 t
             of T(t: Abs, param: @id, body: @body):
-                T(t: Abs, param: id, body: eval(body))
+                T(t: Abs, param: id, body: evalExpr(body))
             of T(t: App, t1: @t1 is T(t: Var, id: _), t2: @t2):
-                T(t: App, t1: t1, t2: eval(t2))
+                T(t: App, t1: t1, t2: evalExpr(t2))
             of T(t: App, t1: T(t: Abs, param: @id, body: @body), t2: @t2):
-                eval(body.substitute(id, eval(t2)))
+                evalExpr(body.substitute(id, evalExpr(t2)))
             of T(t: App, t1: @t1 is T(t: App, t1: _, t2: _), t2: @t2):
-                let temp = T(t: App, t1: eval(t1), t2: eval(t2))
+                let temp = T(t: App, t1: evalExpr(t1), t2: evalExpr(t2))
                 func varAtBottom(t: T): bool =
                     case t:
                         of T(t: App, t1: @t1, t2: _):
@@ -66,7 +66,7 @@ proc eval*(t: T): T =
                 if varAtBottom(temp):
                     temp
                 else:
-                    eval(T(t: App, t1: eval(t1), t2: eval(t2)))
+                    evalExpr(T(t: App, t1: evalExpr(t1), t2: t2))
             else:
                 raise newException(Exception, "λ-Eval Error: Didn't match on any terms.")
     if t.t == Def:
