@@ -1,4 +1,4 @@
-import fusion/matching, ast, tables, pprinter
+import fusion/matching, ast, tables
 {.experimental: "caseStmtMacros".}
 
 var store = initTable[string, T]()

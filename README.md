@@ -14,8 +14,9 @@ Of course you need to have Nim installed: [Official Nim download page](https://n
 ## How to run
 Navigate to the folder in your terminal. Write the following to compile and run the interpreter.
 ```
-nim c -r src/main.nim 
+nim c -r -d:release src/main.nim 
 ```
+The `-d:release` flag is set to allow a large amount of nested recursion.
 
 ## Examples
 ```
