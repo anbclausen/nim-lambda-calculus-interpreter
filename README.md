@@ -67,7 +67,7 @@ Calculating 2! = 2 can also be done in Lambda Calculus:
 λ] FAC 2
 (λs.(λz.(s (s z))))
 ```
-*Note: This interpreter is not very optimized som FAC 2 takes around 1s. FAC 3 takes around 40s.*
+*Note: This interpreter is not very optimized so FAC 2 takes around 1s to compute. FAC 3 takes around 40s.*
 
 And when you're done, simply write:
 ```
