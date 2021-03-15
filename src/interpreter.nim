@@ -1,4 +1,4 @@
-import fusion/matching, ast, tables
+import fusion/matching, ast, tables, pprinter
 {.experimental: "caseStmtMacros".}
 
 var store = initTable[string, T]()
@@ -43,18 +43,20 @@ func substitute(t: T, id: string, t2: T): T =
             raise newException(Exception, "λ-Eval Error: Error while substituting.")
 
 proc eval*(t: T): T =
-    func evalExpr(t: T): T =
+    proc evalExpr(t: T): T =
         case t:
             of T(t: Var, id: @id):
                 t
+            of T(t: Abs, param: @id, body: T(t: Abs, param: @id2, body: @body)):            # for effeciency
+                T(t: Abs, param: id, body: T(t: Abs, param: id2, body: evalExpr(body)))
             of T(t: Abs, param: @id, body: @body):
                 T(t: Abs, param: id, body: evalExpr(body))
             of T(t: App, t1: @t1 is T(t: Var, id: _), t2: @t2):
                 T(t: App, t1: t1, t2: evalExpr(t2))
             of T(t: App, t1: T(t: Abs, param: @id, body: @body), t2: @t2):
-                evalExpr(body.substitute(id, evalExpr(t2)))
+                evalExpr(body.substitute(id, t2))
             of T(t: App, t1: @t1 is T(t: App, t1: _, t2: _), t2: @t2):
-                let temp = T(t: App, t1: evalExpr(t1), t2: evalExpr(t2))
+                let temp = T(t: App, t1: evalExpr(t1), t2: t2)
                 func varAtBottom(t: T): bool =
                     case t:
                         of T(t: App, t1: @t1, t2: _):
@@ -70,7 +72,7 @@ proc eval*(t: T): T =
             else:
                 raise newException(Exception, "λ-Eval Error: Didn't match on any terms.")
     if t.t == Def:
-        store[t.name] = t.val
+        store[t.name] = expand(t.val)
         return T(t: Empty)
-
-    return evalExpr(expand(t))
+    let expanded = expand(t)
+    return evalExpr(expanded)
