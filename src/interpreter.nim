@@ -3,6 +3,20 @@ import fusion/matching, ast, tables
 
 var store = initTable[string, T]()
 
+proc expand(t: T): T =
+    case t:
+        of T(t: Var, id: @id):
+            if store.contains(id):
+                store[id]
+            else:
+                t
+        of T(t: Abs, param: @param, body: @body):
+            T(t: Abs, param: param, body: expand(body))
+        of T(t: App, t1: @t1, t2: @t2):
+            T(t: App, t1: expand(t1), t2: expand(t2))
+        else:
+            raise newException(Exception, "λ-Eval Error: Error while expanding expression with value from store.")
+
 func substitute(t: T, id: string, t2: T): T =
     case t:
         of T(t: Var, id: id):
@@ -29,31 +43,34 @@ func substitute(t: T, id: string, t2: T): T =
             raise newException(Exception, "λ-Eval Error: Error while substituting.")
 
 proc eval*(t: T): T =
-    case t:
-        of T(t: Var, id: _):
-            t
-        of T(t: Abs, param: @id, body: @body):
-            T(t: Abs, param: id, body: eval(body))
-        of T(t: App, t1: @t1 is T(t: Var, id: _), t2: @t2):
-            T(t: App, t1: t1, t2: eval(t2))
-        of T(t: App, t1: T(t: Abs, param: @id, body: @body), t2: @t2):
-            eval(body.substitute(id, eval(t2)))
-        of T(t: App, t1: @t1 is T(t: App, t1: _, t2: _), t2: @t2):
-            let temp = T(t: App, t1: eval(t1), t2: eval(t2))
-            func varAtBottom(t: T): bool =
-                case t:
-                    of T(t: App, t1: @t1, t2: _):
-                        varAtBottom(t1)
-                    of T(t: Var, id: _):
-                        true
-                    else:
-                        false
-            if varAtBottom(temp):
-                temp
+    func evalExpr(t: T): T =
+        case t:
+            of T(t: Var, id: @id):
+                t
+            of T(t: Abs, param: @id, body: @body):
+                T(t: Abs, param: id, body: eval(body))
+            of T(t: App, t1: @t1 is T(t: Var, id: _), t2: @t2):
+                T(t: App, t1: t1, t2: eval(t2))
+            of T(t: App, t1: T(t: Abs, param: @id, body: @body), t2: @t2):
+                eval(body.substitute(id, eval(t2)))
+            of T(t: App, t1: @t1 is T(t: App, t1: _, t2: _), t2: @t2):
+                let temp = T(t: App, t1: eval(t1), t2: eval(t2))
+                func varAtBottom(t: T): bool =
+                    case t:
+                        of T(t: App, t1: @t1, t2: _):
+                            varAtBottom(t1)
+                        of T(t: Var, id: _):
+                            true
+                        else:
+                            false
+                if varAtBottom(temp):
+                    temp
+                else:
+                    eval(T(t: App, t1: eval(t1), t2: eval(t2)))
             else:
-                eval(T(t: App, t1: eval(t1), t2: eval(t2)))
-        of T(t: Def, name: @name, val: @val):
-            store[name] = eval(val)
-            T(t: Empty)
-        else:
-            raise newException(Exception, "λ-Eval Error: Didn't match on any terms.")
+                raise newException(Exception, "λ-Eval Error: Didn't match on any terms.")
+    if t.t == Def:
+        store[t.name] = t.val
+        return T(t: Empty)
+
+    return evalExpr(expand(t))
