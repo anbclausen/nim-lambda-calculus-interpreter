@@ -8,6 +8,7 @@ type
         LPAREN,
         RPAREN,
         ID,
+        DEFAS
     Token* = ref object
         case ttype* : TokenType
         of ID:
@@ -16,7 +17,7 @@ type
             discard
 
 func baseToken(c: char): bool =
-    c == '\\' or c == '.' or c == '(' or c == ')' or c == ' '
+    c == '\\' or c == '.' or c == '(' or c == ')' or c == ' ' or c == ':'
 
 func tokenize*(source: seq[char]): seq[Token] = 
     case source:
@@ -30,6 +31,8 @@ func tokenize*(source: seq[char]): seq[Token] =
             @[Token(ttype: LPAREN)] & tokenize(tail)
         of [')', all @tail]:
             @[Token(ttype: RPAREN)] & tokenize(tail)
+        of [':', '=', all @tail]:
+            @[Token(ttype: DEFAS)] & tokenize(tail)
         of [' ', until != ' ', all @tail]:
             tokenize(tail)
         of [until @a.baseToken(), all @tail]:
