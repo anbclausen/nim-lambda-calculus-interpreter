@@ -18,28 +18,31 @@ nim c -r src/main.nim
 ```
 
 ## Examples
-This interpreter outputs the result from the Lexer, the Parser and finally the interpreter.
 ```
 λ] (\x.x) y
-Tokens:   LPAREN LAMBDA x DOT x RPAREN y 
-AST:      ((λx.x) y)
-Result:   y
+y
 ```
 
 Renaming is implemented.
 ```
 λ] (\x.\b.b x) b
-Tokens:   LPAREN LAMBDA x DOT LAMBDA b DOT b x RPAREN b 
-AST:      ((λx.(λb.(b x))) b)
-Result:   (λb'.(b' b))
+(λb'.(b' b))
 ```
 
-Try to have some fun with it! Here 2 + 3 in Lambda Calculus:
+Assignment is implemented.
 ```
-λ] (\m.\n.\s.\z.m s (n s z)) (\s.\z.s (s z)) (\s.\z.s (s (s z)))
-Tokens:   LPAREN LAMBDA m DOT LAMBDA n DOT LAMBDA s DOT LAMBDA z DOT m s LPAREN n s z RPAREN RPAREN LPAREN LAMBDA s DOT LAMBDA z DOT s LPAREN s z RPAREN RPAREN LPAREN LAMBDA s DOT LAMBDA z DOT s LPAREN s LPAREN s z RPAREN RPAREN RPAREN 
-AST:      (((λm.(λn.(λs.(λz.((m s) ((n s) z)))))) (λs.(λz.(s (s z))))) (λs.(λz.(s (s (s z))))))
-Result:   (λs.(λz.(s (s (s (s (s z)))))))
+λ] ID := \x.x
+λ] ID w
+w
+```
+
+Try to have some fun with it! Here 2 + 3 = 5 in Lambda Calculus:
+```
+λ] 2 := \s.\z.s (s z)
+λ] 3 := \s.\z.s (s (s z))
+λ] + := \m.\n.\s.\z.m s (n s z)            
+λ] + 2 3
+(λs.(λz.(s (s (s (s (s z)))))))
 ```
 
 And when you're done, simply write:
@@ -47,6 +50,3 @@ And when you're done, simply write:
 λ] quit
 Goodbλe!
 ```
-
-## TO DO
-- Introduce `let` keyword to make life a little easier.
