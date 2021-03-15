@@ -8,4 +8,9 @@ while true:
         echo "Goodbλe!"
         break
     
-    echo pprint(res)
+    let tokens = tokenize(toSeq(inp.items))
+    let ast = parse(tokens)
+    let res = eval(ast)
+    let print = pprint(res)
+    if print != "":
+        echo print
