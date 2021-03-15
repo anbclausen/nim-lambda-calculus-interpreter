@@ -4,6 +4,7 @@ type
         Abs, 
         App,
         Def,
+        Empty,
     T*   = ref object         # Term
         case t*: TermType     # type
         of Var: 
@@ -17,3 +18,5 @@ type
         of Def:
             name*: string
             val*: T
+        of Empty:
+            discard

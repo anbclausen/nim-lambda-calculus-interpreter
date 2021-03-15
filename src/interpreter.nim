@@ -1,5 +1,7 @@
-import fusion/matching, ast
+import fusion/matching, ast, tables
 {.experimental: "caseStmtMacros".}
+
+var store = initTable[string, T]()
 
 func substitute(t: T, id: string, t2: T): T =
     case t:
@@ -26,7 +28,7 @@ func substitute(t: T, id: string, t2: T): T =
         else:
             raise newException(Exception, "λ-Eval Error: Error while substituting.")
 
-func eval*(t: T): T =
+proc eval*(t: T): T =
     case t:
         of T(t: Var, id: _):
             t
@@ -50,5 +52,8 @@ func eval*(t: T): T =
                 temp
             else:
                 eval(T(t: App, t1: eval(t1), t2: eval(t2)))
+        of T(t: Def, name: @name, val: @val):
+            store[name] = eval(val)
+            T(t: Empty)
         else:
             raise newException(Exception, "λ-Eval Error: Didn't match on any terms.")
