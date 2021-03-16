@@ -7,7 +7,6 @@ while true:
     if inp == "quit":
         echo "Goodbλe!"
         break
-    
     let tokens = tokenize(toSeq(inp.items))
     let ast = parse(tokens)
     let res = eval(ast)
