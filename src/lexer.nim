@@ -12,7 +12,7 @@ type
     Token* = ref object
         case ttype* : TokenType
         of ID:
-            name*: string
+            name*: cstring
         else:
             discard
 

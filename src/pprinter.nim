@@ -1,11 +1,11 @@
 import ast, lexer, strformat
 
-func pprint*(t: T): string =
+func pprint*(t: T): cstring =
     case t.t:
         of Var:
             t.id
         of Abs:
-            fmt"(λ{t.param}.{pprint(t.body)})"
+            fmt"(|{t.param}.{pprint(t.body)})"
         of App:
             fmt"({pprint(t.t1)} {pprint(t.t2)})"
         of Def:
@@ -25,6 +25,6 @@ func pprint*(tokens: seq[Token]): string =    # to pretty print the lexer's outp
             of LPAREN:
                 result.add("LPAREN ")
             of ID:
-                result.add(tokens[i].name & " ")
+                result.add($tokens[i].name & " ")
             of DEFAS:
                 result.add("DEFAS ")

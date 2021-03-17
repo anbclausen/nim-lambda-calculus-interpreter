@@ -8,15 +8,15 @@ type
     T*   = ref object         # Term
         case t*: TermType     # type
         of Var: 
-            id*: string
+            id*: cstring
         of Abs:
-            param*: string
+            param*: cstring
             body*: T
         of App:
             t1*: T
             t2*: T
         of Def:
-            name*: string
+            name*: cstring
             val*: T
         of Empty:
             discard

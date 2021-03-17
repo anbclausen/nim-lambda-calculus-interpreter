@@ -1,7 +1,7 @@
 import fusion/matching, ast, tables
 {.experimental: "caseStmtMacros".}
 
-var store = initTable[string, T]()
+var store = initTable[cstring, T]()
 
 proc expand(t: T): T =
     case t:
@@ -17,7 +17,7 @@ proc expand(t: T): T =
         else:
             raise newException(Exception, "λ-Eval Error: Error while expanding expression with value from store.")
 
-func substitute(t: T, id: string, t2: T): T =
+func substitute(t: T, id: cstring, t2: T): T =
     case t:
         of T(t: Var, id: id):
             t2
@@ -26,14 +26,14 @@ func substitute(t: T, id: string, t2: T): T =
         of @a is T(t: Abs, param: id, body: @body):
             case t2:
                 of T(t: Var, id: id):
-                    let nid = id & "'"
+                    let nid = $id & "'"
                     T(t: Abs, param: nid, body: substitute(body.substitute(id, T(t: Var, id: nid)), id, t2))
                 else:
                     a
         of T(t: Abs, param: @param, body: @body):
             case t2:
                 of T(t: Var, id: param):
-                    let nid = param & "'"
+                    let nid = $param & "'"
                     T(t: Abs, param: nid, body: substitute(body.substitute(param, T(t: Var, id: nid)), id, t2))
                 else:
                     T(t: Abs, param: param, body: body.substitute(id, t2))
