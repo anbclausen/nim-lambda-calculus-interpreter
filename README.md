@@ -1,22 +1,11 @@
 # Lambda Calculus Interpreter, written in Nim
-This is a simple Lambda Calculus Interpreter, a personal project I'm doing for fun. I love Lambda Calculus and I'm very interested in Nim, a programming language I've recently discovered.
+This is the code for the website running the Lambda Calculus Interpreter.
 
-Note that I have taken a functional approach to writing this interpreter in Nim using the `fusion/matching` library.
+Compiled with
 
-## Prerequisites
-You should have the `fusion` library installed. This is used for pattern matching.
 ```
-nimble install fusion
+nim js -r -d:release src/main.nim
 ```
-
-Of course you need to have Nim installed: [Official Nim download page](https://nim-lang.org/install.html).
-
-## How to run
-Navigate to the folder in your terminal. Write the following to compile and run the interpreter.
-```
-nim c -r -d:release src/main.nim 
-```
-The `-d:release` flag is set to allow a large amount of nested recursion.
 
 ## Examples
 ```

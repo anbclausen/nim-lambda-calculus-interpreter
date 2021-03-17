@@ -9,9 +9,9 @@ window.onload = () => {
 function enter(e) {
     if(e.code == "Enter") {
         const res = run(input.value.toString().trim());
-        output.innerHTML += input.value.toString().trim() + "<br>"
+        output.innerHTML += "λ] " + input.value.toString().trim() + "<br>"
         if(res != "") {
-            output.innerHTML += "&nbsp;&nbsp;" + res + "<br>"
+            output.innerHTML += "&nbsp;&nbsp;&nbsp;" + res + "<br>"
         }
         input.value = "";
     }
