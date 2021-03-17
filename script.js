@@ -8,11 +8,13 @@ window.onload = () => {
 
 function enter(e) {
     if(e.code == "Enter") {
-        const res = run(input.value.toString().trim());
-        output.innerHTML += "λ] " + input.value.toString().trim() + "<br>"
+        const added = "λ] ".toString() + input.value.toString().trim() + "<br>"
+        const inp = input.value.toString().trim()
+        input.value = "";
+        const res = run(inp);
+        output.innerHTML += added
         if(res != "") {
             output.innerHTML += "&nbsp;&nbsp;&nbsp;" + res + "<br>"
         }
-        input.value = "";
     }
 }
