@@ -1,0 +1,92 @@
+body {
+    font-family: "Source Code Pro", sans-serif;
+  }
+
+#terminal {
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    margin: 0;
+
+    border-radius: 10px;
+    background-color: #444;
+
+    padding: 50px;
+
+    box-shadow: 0px 0 -10px rgba(0, 0, 0, 1);
+
+    overflow: hidden;
+}
+
+#input {
+    position: absolute;
+
+    width: 93%;
+    height: 20px;
+    line-height: 20px;
+    font-size: 20px;
+    outline-width: 0;
+
+    color: #eee;
+    background-color: #444;
+
+    border: 0;
+
+    overflow: hidden;
+
+    resize: none;
+
+    bottom: 50px;
+}
+
+#output {
+    position: absolute;
+
+    width: 93%;
+
+    height: 100%;
+
+    overflow: hidden;
+
+    bottom: 70px;
+}
+
+#output-content {
+    position: absolute;
+
+    width: 93%;
+
+    line-height: 20px;
+    font-size: 20px;
+
+    color: #eee;
+
+    bottom: 0;
+}
+
+#title {
+    position: absolute;
+    width: 99%;
+    top: 7%;
+    text-align: center;
+
+    font-size: xx-large;
+}
+
+a {
+    color: #444;
+}
+
+#footer {
+    position: absolute;
+    width: 99%;
+    bottom: 5px;
+    text-align: center;
+
+    color: #999;
+}
