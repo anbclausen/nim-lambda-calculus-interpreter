@@ -17,13 +17,13 @@ type
             discard
 
 func baseToken(c: char): bool =
-    c == '|' or c == '.' or c == '(' or c == ')' or c == ' ' or c == ':'
+    c == '\\' or c == '.' or c == '(' or c == ')' or c == ' ' or c == ':'
 
 func tokenize*(source: seq[char]): seq[Token] = 
     case source:
         of []:
             @[]
-        of ['|', all @tail]:
+        of ['\\', all @tail]:
             @[Token(ttype: LAMBDA)] & tokenize(tail)
         of ['.', all @tail]:
             @[Token(ttype: DOT)] & tokenize(tail)

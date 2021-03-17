@@ -26,14 +26,14 @@ func substitute(t: T, id: cstring, t2: T): T =
         of @a is T(t: Abs, param: id, body: @body):
             case t2:
                 of T(t: Var, id: id):
-                    let nid = $id & "'"
+                    let nid = cstring($id & "'")
                     T(t: Abs, param: nid, body: substitute(body.substitute(id, T(t: Var, id: nid)), id, t2))
                 else:
                     a
         of T(t: Abs, param: @param, body: @body):
             case t2:
                 of T(t: Var, id: param):
-                    let nid = $param & "'"
+                    let nid = cstring($param & "'")
                     T(t: Abs, param: nid, body: substitute(body.substitute(param, T(t: Var, id: nid)), id, t2))
                 else:
                     T(t: Abs, param: param, body: body.substitute(id, t2))

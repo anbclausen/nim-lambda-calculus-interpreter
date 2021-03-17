@@ -1,15 +1,15 @@
 import ast, lexer, strformat
 
-func pprint*(t: T): cstring =
+func pprint*(t: T): string =
     case t.t:
         of Var:
-            t.id
+            $t.id
         of Abs:
-            fmt"(|{t.param}.{pprint(t.body)})"
+            fmt"(λ{$t.param}.{$pprint(t.body)})"
         of App:
-            fmt"({pprint(t.t1)} {pprint(t.t2)})"
+            fmt"({$pprint(t.t1)} {$pprint(t.t2)})"
         of Def:
-            fmt"{t.name} := {pprint(t.val)}"
+            fmt"{$t.name} := {$pprint(t.val)}"
         of Empty:
             ""
 
