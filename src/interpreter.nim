@@ -1,78 +1,78 @@
 import fusion/matching, ast, tables
 {.experimental: "caseStmtMacros".}
 
-var store = initTable[string, T]()
+var store = initTable[string, Expr]()
 
-proc expand(t: T): T =
-    case t:
-        of T(t: Var, id: @id):
+proc expand(e: Expr): Expr =
+    case e:
+        of Expr(exprtype: Var, id: @id):
             if store.contains(id):
                 store[id]
             else:
-                t
-        of T(t: Abs, param: @param, body: @body):
-            T(t: Abs, param: param, body: expand(body))
-        of T(t: App, t1: @t1, t2: @t2):
-            T(t: App, t1: expand(t1), t2: expand(t2))
+                e
+        of Expr(exprtype: Abs, param: @param, body: @body):
+            Expr(exprtype: Abs, param: param, body: expand(body))
+        of Expr(exprtype: App, e1: @e1, e2: @e2):
+            Expr(exprtype: App, e1: expand(e1), e2: expand(e2))
         else:
             raise newException(Exception, "λ-Eval Error: Error while expanding expression with value from store.")
 
-func substitute(t: T, id: string, t2: T): T =
-    case t:
-        of T(t: Var, id: id):
-            t2
-        of T(t: Var, id: _):
-            t
-        of @a is T(t: Abs, param: id, body: @body):
-            case t2:
-                of T(t: Var, id: id):
+func substitute(e: Expr, id: string, e2: Expr): Expr =
+    case e:
+        of Expr(exprtype: Var, id: id):
+            e2
+        of Expr(exprtype: Var, id: _):
+            e
+        of @a is Expr(exprtype: Abs, param: id, body: @body):
+            case e2:
+                of Expr(exprtype: Var, id: id):
                     let nid = id & "'"
-                    T(t: Abs, param: nid, body: substitute(body.substitute(id, T(t: Var, id: nid)), id, t2))
+                    Expr(exprtype: Abs, param: nid, body: substitute(body.substitute(id, Expr(exprtype: Var, id: nid)), id, e2))
                 else:
                     a
-        of T(t: Abs, param: @param, body: @body):
-            case t2:
-                of T(t: Var, id: param):
+        of Expr(exprtype: Abs, param: @param, body: @body):
+            case e2:
+                of Expr(exprtype: Var, id: param):
                     let nid = param & "'"
-                    T(t: Abs, param: nid, body: substitute(body.substitute(param, T(t: Var, id: nid)), id, t2))
+                    Expr(exprtype: Abs, param: nid, body: substitute(body.substitute(param, Expr(exprtype: Var, id: nid)), id, e2))
                 else:
-                    T(t: Abs, param: param, body: body.substitute(id, t2))
-        of T(t: App, t1: @t1, t2: @t3):
-            T(t: App, t1: t1.substitute(id, t2), t2: t3.substitute(id, t2))
+                    Expr(exprtype: Abs, param: param, body: body.substitute(id, e2))
+        of Expr(exprtype: App, e1: @e1, e2: @e3):
+            Expr(exprtype: App, e1: e1.substitute(id, e2), e2: e3.substitute(id, e2))
         else:
             raise newException(Exception, "λ-Eval Error: Error while substituting.")
 
-proc eval*(t: T): T =
-    proc evalExpr(t: T): T =
-        case t:
-            of T(t: Var, id: @id):
-                t
-            of T(t: Abs, param: @id, body: T(t: Abs, param: @id2, body: @body)):            # for effeciency
-                T(t: Abs, param: id, body: T(t: Abs, param: id2, body: evalExpr(body)))
-            of T(t: Abs, param: @id, body: @body):
-                T(t: Abs, param: id, body: evalExpr(body))
-            of T(t: App, t1: @t1 is T(t: Var, id: _), t2: @t2):
-                T(t: App, t1: t1, t2: evalExpr(t2))
-            of T(t: App, t1: T(t: Abs, param: @id, body: @body), t2: @t2):
-                evalExpr(body.substitute(id, t2))
-            of T(t: App, t1: @t1 is T(t: App, t1: _, t2: _), t2: @t2):
-                let temp = T(t: App, t1: evalExpr(t1), t2: t2)
-                func varAtBottom(t: T): bool =
-                    case t:
-                        of T(t: App, t1: @t1, t2: _):
-                            varAtBottom(t1)
-                        of T(t: Var, id: _):
+proc eval*(e: Expr): Expr =
+    proc evalExpr(e: Expr): Expr =
+        case e:
+            of Expr(exprtype: Var, id: @id):
+                e
+            of Expr(exprtype: Abs, param: @id, body: Expr(exprtype: Abs, param: @id2, body: @body)):            # for effeciency
+                Expr(exprtype: Abs, param: id, body: Expr(exprtype: Abs, param: id2, body: evalExpr(body)))
+            of Expr(exprtype: Abs, param: @id, body: @body):
+                Expr(exprtype: Abs, param: id, body: evalExpr(body))
+            of Expr(exprtype: App, e1: @e1 is Expr(exprtype: Var, id: _), e2: @e2):
+                Expr(exprtype: App, e1: e1, e2: evalExpr(e2))
+            of Expr(exprtype: App, e1: Expr(exprtype: Abs, param: @id, body: @body), e2: @e2):
+                evalExpr(body.substitute(id, e2))
+            of Expr(exprtype: App, e1: @e1 is Expr(exprtype: App, e1: _, e2: _), e2: @e2):
+                let temp = Expr(exprtype: App, e1: evalExpr(e1), e2: e2)
+                func varAtBottom(e: Expr): bool =
+                    case e:
+                        of Expr(exprtype: App, e1: @e1, e2: _):
+                            varAtBottom(e1)
+                        of Expr(exprtype: Var, id: _):
                             true
                         else:
                             false
                 if varAtBottom(temp):
                     temp
                 else:
-                    evalExpr(T(t: App, t1: evalExpr(t1), t2: t2))
+                    evalExpr(Expr(exprtype: App, e1: evalExpr(e1), e2: e2))
             else:
                 raise newException(Exception, "λ-Eval Error: Didn't match on any terms.")
-    if t.t == Def:
-        store[t.name] = expand(t.val)
-        return T(t: Empty)
-    let expanded = expand(t)
+    if e.exprtype == Def:
+        store[e.name] = expand(e.val)
+        return Expr(exprtype: Empty)
+    let expanded = expand(e)
     return evalExpr(expanded)

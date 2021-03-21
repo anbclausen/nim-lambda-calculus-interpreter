@@ -5,18 +5,18 @@ type
         App,
         Def,
         Empty,
-    T*   = ref object         # Term
-        case t*: TermType     # type
+    Expr*   = ref object         # Term
+        case exprtype*: TermType     # type
         of Var: 
             id*: string
         of Abs:
             param*: string
-            body*: T
+            body*: Expr
         of App:
-            t1*: T
-            t2*: T
+            e1*: Expr
+            e2*: Expr
         of Def:
             name*: string
-            val*: T
+            val*: Expr
         of Empty:
             discard
